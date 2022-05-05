@@ -4,6 +4,7 @@ import ideaImageUrl from "../../assets/idea.svg";
 import thoughtImageUrl from "../../assets/thought.svg";
 import { FeedbackTypeStep } from "./Steps/FeedbackTypeStep";
 import { FeedbackContentStep } from "./Steps/FeedbackContentStep";
+import { FeedbackSuccessStep } from "./Steps/FeedbackSuccessStep";
 
 export const feedbackTypes = {
   BUG: {
@@ -36,28 +37,31 @@ export type FeedbackType = keyof typeof feedbackTypes;
 export function WidgetFrom() {
   // Salvando o feedbackType escolido pelo usuário
   const [feedbackType, setFeedbackType] = useState<FeedbackType | null>(null);
+  const [feedbackSent, setFeedbackSent] = useState(false);
 
-  function handleFeedbackRestart(){
-    setFeedbackType(null)
+  function handleFeedbackRestart() {
+    setFeedbackType(null);
+    setFeedbackSent(false)
   }
 
   return (
     <div>
       <div className="bg-zinc-900 p-4 relative rounded-2xl mb-4 flex flex-col items-center shadow-lg w-[calc(100vw-2rem)] md:w-auto">
-        
-        
+        {feedbackSent ? (
 
-        {!feedbackType ? (
-         <FeedbackTypeStep onFeedbackTypeChanged={setFeedbackType}/>
+          <FeedbackSuccessStep onFeedbackRestartRequested={handleFeedbackRestart}/>
         ) : (
-
-         <FeedbackContentStep 
-         
-          feedbackType={feedbackType}
-          onFeedbackRestartRequested={handleFeedbackRestart}
-         
-         />
-          
+          <>
+            {!feedbackType ? (
+              <FeedbackTypeStep onFeedbackTypeChanged={setFeedbackType} />
+            ) : (
+              <FeedbackContentStep
+                feedbackType={feedbackType}
+                onFeedbackSent={() => setFeedbackSent(true)}
+                onFeedbackRestartRequested={handleFeedbackRestart}
+              />
+            )}
+          </>
         )}
 
         <footer className="text-xs text-neutral-400">
